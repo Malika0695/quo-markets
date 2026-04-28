@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quo Markets — Trade Beyond Limits</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0c;
+    --bg-elev: #131316;
+    --bg-card: #18181c;
+    --ink: #f4f1ea;
+    --ink-muted: #8a8a92;
+    --line: #25252a;
+    --lime: #d4ff3d;
+    --lime-soft: rgba(212, 255, 61, 0.1);
+    --gold: #e8b15c;
+    --red: #ff5b5b;
+    --green: #4ade80;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    opacity: 0.05;
+    pointer-events: none;
+    z-index: 100;
+    mix-blend-mode: overlay;
+  }
+
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .serif { font-family: 'Fraunces', serif; font-weight: 300; }
+
+  /* TICKER */
+  .ticker {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+    z-index: 50;
+    height: 38px;
+    display: flex;
+    align-items: center;
+  }
+  .ticker-track {
+    display: flex;
+    gap: 48px;
+    white-space: nowrap;
+    animation: ticker 50s linear infinite;
+    padding-left: 48px;
+  }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  .ticker-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .ticker-symbol { color: var(--ink); font-weight: 500; }
+  .ticker-price { color: var(--ink-muted); }
+  .ticker-up { color: var(--green); }
+  .ticker-down { color: var(--red); }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 38px; left: 0; right: 0;
+    padding: 18px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 40;
+    backdrop-filter: blur(20px);
+    background: rgba(10, 10, 12, 0.7);
+    border-bottom: 1px solid var(--line);
+  }
+  .logo {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo-mark {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--lime);
+    box-shadow: 0 0 24px var(--lime);
+    position: relative;
+  }
+  .logo-mark::after {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border-radius: 50%;
+    background: var(--bg);
+  }
+  .nav-cta {
+    background: var(--lime);
+    color: var(--bg);
+    padding: 10px 20px;
+    border-radius: 100px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 30px var(--lime-soft);
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    padding: 160px 32px 80px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .hero-bg::before {
+    content: '';
+    position: absolute;
+    width: 800px; height: 800px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--lime-soft) 0%, transparent 70%);
+    top: -200px; right: -200px;
+    filter: blur(40px);
+  }
+  .hero-bg::after {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232, 177, 92, 0.08) 0%, transparent 70%);
+    bottom: -150px; left: -100px;
+    filter: blur(40px);
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: 0.3;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+  }
+
+  .hero-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.1s forwards;
+  }
+  .badge .dot {
+    width: 6px; height: 6px;
+    background: var(--lime);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--lime);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(48px, 7vw, 96px);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    margin-bottom: 32px;
+  }
+  h1 .line {
+    display: block;
+    overflow: hidden;
+  }
+  h1 .word {
+    display: inline-block;
+    transform: translateY(110%);
+    animation: rise 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+  h1 .accent {
+    font-style: italic;
+    color: var(--lime);
+    font-weight: 400;
+  }
+  @keyframes rise {
+    to { transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    color: var(--ink-muted);
+    max-width: 480px;
+    margin-bottom: 40px;
+    line-height: 1.6;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.9s forwards;
+  }
+
+  .cta-group {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 1.1s forwards;
+  }
+  .cta-primary {
+    background: var(--lime);
+    color: var(--bg);
+    padding: 18px 32px;
+    border-radius: 100px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s;
+  }
+  .cta-primary:hover::before { transform: translateX(100%); }
+  .cta-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px rgba(212, 255, 61, 0.3);
+  }
+  .cta-secondary {
+    background: transparent;
+    color: var(--ink);
+    padding: 18px 32px;
+    border-radius: 100px;
+    border: 1px solid var(--line);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s;
+  }
+  .cta-secondary:hover {
+    border-color: var(--ink-muted);
+    background: var(--bg-elev);
+  }
+
+  .hero-meta {
+    margin-top: 56px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    gap: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 1.3s forwards;
+  }
+  .hero-meta-item .num {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 400;
+    color: var(--lime);
+    display: block;
+    line-height: 1;
+  }
+  .hero-meta-item .lbl {
+    font-size: 12px;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 6px;
+  }
+
+  /* CHART VISUAL */
+  .chart-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 28px;
+    position: relative;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.7s forwards;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+  }
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+  .pair-name {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 400;
+  }
+  .pair-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+    letter-spacing: 0.1em;
+  }
+  .pair-price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 500;
+    text-align: right;
+    line-height: 1;
+  }
+  .pair-change {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--green);
+    text-align: right;
+    margin-top: 6px;
+    display: inline-block;
+    background: rgba(74, 222, 128, 0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+  .chart-svg {
+    width: 100%;
+    height: 180px;
+  }
+  .chart-line {
+    fill: none;
+    stroke: var(--lime);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: draw 2.5s ease-out 1s forwards;
+    filter: drop-shadow(0 0 6px var(--lime-soft));
+  }
+  .chart-area {
+    fill: url(#areaGrad);
+    opacity: 0;
+    animation: fadeIn 1s ease 3s forwards;
+  }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  .chart-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+  .chart-stat .l {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    margin-bottom: 4px;
+  }
+  .chart-stat .v {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* SECTION */
+  section {
+    padding: 120px 32px;
+    position: relative;
+  }
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--lime);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .eyebrow::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--lime);
+  }
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(40px, 5vw, 64px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    max-width: 900px;
+  }
+  .section-title em {
+    font-style: italic;
+    color: var(--lime);
+    font-weight: 400;
+  }
+  .section-sub {
+    font-size: 18px;
+    color: var(--ink-muted);
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  /* STATS */
+  .stats-strip {
+    background: var(--bg-elev);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 60px 32px;
+  }
+  .stats-grid {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+  }
+  .stat-item {
+    text-align: center;
+    border-right: 1px solid var(--line);
+    padding: 0 20px;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(48px, 5vw, 72px);
+    font-weight: 300;
+    line-height: 1;
+    color: var(--ink);
+    margin-bottom: 12px;
+    letter-spacing: -0.03em;
+  }
+  .stat-num .plus, .stat-num .sym {
+    color: var(--lime);
+    font-style: italic;
+  }
+  .stat-lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ink-muted);
+  }
+
+  /* FEATURES BENTO */
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: minmax(220px, auto);
+    gap: 20px;
+    margin-top: 64px;
+  }
+  .bento-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s;
+  }
+  .bento-card:hover {
+    border-color: rgba(212, 255, 61, 0.3);
+    transform: translateY(-4px);
+  }
+  .bento-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(212, 255, 61, 0.06), transparent 40%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .bento-card:hover::before { opacity: 1; }
+
+  .b-1 { grid-column: span 3; grid-row: span 2; }
+  .b-2 { grid-column: span 3; }
+  .b-3 { grid-column: span 2; }
+  .b-4 { grid-column: span 2; }
+  .b-5 { grid-column: span 2; }
+  .b-6 { grid-column: span 3; }
+  .b-7 { grid-column: span 3; }
+
+  .feat-icon {
+    width: 48px; height: 48px;
+    background: var(--lime-soft);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--lime);
+    margin-bottom: 24px;
+  }
+  .feat-title {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .feat-desc {
+    color: var(--ink-muted);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* Big bento (b-1) */
+  .b-1 {
+    background: linear-gradient(135deg, #1a1a1f 0%, #0f0f12 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .b-1 .feat-title {
+    font-size: 48px;
+    line-height: 1;
+  }
+  .markets-orb {
+    position: relative;
+    height: 200px;
+    margin-top: 24px;
+  }
+  .market-pill {
+    position: absolute;
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink);
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .mp-1 { top: 10%; left: 0; animation-delay: 0s; }
+  .mp-2 { top: 30%; left: 30%; animation-delay: 0.5s; border-color: var(--lime); color: var(--lime); }
+  .mp-3 { top: 60%; left: 5%; animation-delay: 1s; }
+  .mp-4 { top: 15%; right: 10%; animation-delay: 1.5s; }
+  .mp-5 { top: 70%; right: 25%; animation-delay: 2s; }
+  .mp-6 { top: 45%; right: 0; animation-delay: 2.5s; border-color: var(--gold); color: var(--gold); }
+
+  /* Big number bento */
+  .b-2 {
+    background: var(--bg-card);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .big-number {
+    font-family: 'Fraunces', serif;
+    font-size: 120px;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--lime);
+    letter-spacing: -0.04em;
+  }
+
+  /* AWARDS */
+  .awards-section {
+    background: var(--bg-elev);
+    padding: 100px 32px;
+    text-align: center;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .awards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    max-width: 1100px;
+    margin: 64px auto 0;
+  }
+  .award-card {
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 40px 28px;
+    background: var(--bg-card);
+    position: relative;
+    transition: all 0.4s;
+  }
+  .award-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-4px);
+  }
+  .award-year {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+  .award-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .award-icon {
+    width: 56px; height: 56px;
+    margin: 0 auto 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), #b8842e);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bg);
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 500;
+  }
+
+  /* HOW IT WORKS */
+  .steps {
+    margin-top: 80px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    position: relative;
+  }
+  .steps::before {
+    content: '';
+    position: absolute;
+    top: 30px;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--line) 20%, var(--line) 80%, transparent);
+  }
+  .step {
+    text-align: center;
+    position: relative;
+  }
+  .step-num {
+    width: 60px; height: 60px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 32px;
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--lime);
+    position: relative;
+    z-index: 1;
+  }
+  .step-num::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border: 1px solid var(--lime-soft);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .step:hover .step-num::after { opacity: 1; }
+  .step-title {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 400;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .step-desc {
+    color: var(--ink-muted);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+
+  /* TESTIMONIAL */
+  .quote-section {
+    padding: 140px 32px;
+    text-align: center;
+    background: var(--bg);
+  }
+  .quote {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(28px, 3.5vw, 48px);
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    max-width: 1000px;
+    margin: 0 auto 40px;
+  }
+  .quote em {
+    color: var(--lime);
+    font-style: italic;
+  }
+  .quote-author {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* FINAL CTA */
+  .final-cta {
+    padding: 140px 32px;
+    text-align: center;
+    background: linear-gradient(180deg, var(--bg) 0%, #050506 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .final-cta::before {
+    content: '';
+    position: absolute;
+    width: 1000px; height: 1000px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--lime-soft) 0%, transparent 60%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    filter: blur(60px);
+  }
+  .final-cta-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .final-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(56px, 8vw, 120px);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    margin-bottom: 32px;
+  }
+  .final-title em {
+    font-style: italic;
+    color: var(--lime);
+    font-weight: 400;
+  }
+  .final-sub {
+    font-size: 20px;
+    color: var(--ink-muted);
+    max-width: 580px;
+    margin: 0 auto 48px;
+    line-height: 1.5;
+  }
+  .cta-mega {
+    background: var(--lime);
+    color: var(--bg);
+    padding: 24px 48px;
+    border-radius: 100px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.4s;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 30px 60px -15px rgba(212, 255, 61, 0.4);
+  }
+  .cta-mega:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 40px 80px -15px rgba(212, 255, 61, 0.6);
+  }
+  .cta-mega svg {
+    transition: transform 0.3s;
+  }
+  .cta-mega:hover svg {
+    transform: translateX(4px);
+  }
+  .final-trust {
+    margin-top: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    color: var(--ink-muted);
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .trust-item svg { color: var(--lime); }
+
+  /* FOOTER */
+  footer {
+    padding: 60px 32px 40px;
+    border-top: 1px solid var(--line);
+    background: var(--bg);
+  }
+  .footer-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .footer-disclaimer {
+    color: var(--ink-muted);
+    font-size: 11px;
+    max-width: 700px;
+    line-height: 1.6;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .footer-logo {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    color: var(--ink-muted);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 980px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 60px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    .stat-item:nth-child(2) { border-right: none; }
+    .bento { grid-template-columns: repeat(2, 1fr); }
+    .b-1, .b-2, .b-3, .b-4, .b-5, .b-6, .b-7 { grid-column: span 2; grid-row: auto; }
+    .awards-grid { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr; gap: 48px; }
+    .steps::before { display: none; }
+    .hero-meta { flex-wrap: wrap; gap: 24px; }
+    nav { padding: 14px 20px; }
+    section { padding: 80px 20px; }
+    .hero { padding: 140px 20px 60px; }
+    .stats-strip { padding: 40px 20px; }
+    .quote-section, .final-cta { padding: 100px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LIVE TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <div class="ticker-item"><span class="ticker-symbol">EUR/USD</span><span class="ticker-price">1.0847</span><span class="ticker-up">▲ 0.23%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">BTC/USD</span><span class="ticker-price">94,328</span><span class="ticker-up">▲ 2.41%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">XAU/USD</span><span class="ticker-price">2,683.50</span><span class="ticker-down">▼ 0.18%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">GBP/USD</span><span class="ticker-price">1.2611</span><span class="ticker-up">▲ 0.41%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">ETH/USD</span><span class="ticker-price">3,412.80</span><span class="ticker-up">▲ 1.89%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">USD/JPY</span><span class="ticker-price">154.22</span><span class="ticker-down">▼ 0.32%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">NAS100</span><span class="ticker-price">21,847</span><span class="ticker-up">▲ 0.68%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">SPX500</span><span class="ticker-price">5,994.81</span><span class="ticker-up">▲ 0.52%</span></div>
+    <!-- Duplicate for seamless loop -->
+    <div class="ticker-item"><span class="ticker-symbol">EUR/USD</span><span class="ticker-price">1.0847</span><span class="ticker-up">▲ 0.23%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">BTC/USD</span><span class="ticker-price">94,328</span><span class="ticker-up">▲ 2.41%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">XAU/USD</span><span class="ticker-price">2,683.50</span><span class="ticker-down">▼ 0.18%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">GBP/USD</span><span class="ticker-price">1.2611</span><span class="ticker-up">▲ 0.41%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">ETH/USD</span><span class="ticker-price">3,412.80</span><span class="ticker-up">▲ 1.89%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">USD/JPY</span><span class="ticker-price">154.22</span><span class="ticker-down">▼ 0.32%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">NAS100</span><span class="ticker-price">21,847</span><span class="ticker-up">▲ 0.68%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">SPX500</span><span class="ticker-price">5,994.81</span><span class="ticker-up">▲ 0.52%</span></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-mark"></div>
+    <span>Quo<em style="font-style:italic;color:var(--lime);">.</em>Markets</span>
+  </div>
+  <a href="https://my.quomarkets.com/register?regnew=5603" class="nav-cta" target="_blank">
+    Open Free Account
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-grid"></div>
+  </div>
+  <div class="hero-inner">
+    <div>
+      <div class="badge">
+        <span class="dot"></span>
+        Markets are Live · Trade Now
+      </div>
+      <h1>
+        <span class="line"><span class="word" style="animation-delay: 0.2s">Trade</span></span>
+        <span class="line"><span class="word" style="animation-delay: 0.35s">beyond</span></span>
+        <span class="line"><span class="word accent" style="animation-delay: 0.5s">limits.</span></span>
+      </h1>
+      <p class="hero-sub">
+        Join the award-winning broker giving traders access to 350+ markets, ultra-low spreads, and lightning-fast withdrawals. Start with as little as $1.
+      </p>
+      <div class="cta-group">
+        <a href="https://my.quomarkets.com/register?regnew=5603" class="cta-primary" target="_blank">
+          Claim Free Account
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#features" class="cta-secondary">
+          Why Quo Markets
+        </a>
+      </div>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="num">350+</span>
+          <div class="lbl">Markets</div>
+        </div>
+        <div class="hero-meta-item">
+          <span class="num">$1</span>
+          <div class="lbl">Min Deposit</div>
+        </div>
+        <div class="hero-meta-item">
+          <span class="num">0.0</span>
+          <div class="lbl">Spread Pips</div>
+        </div>
+        <div class="hero-meta-item">
+          <span class="num">87%</span>
+          <div class="lbl">Rebates</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHART CARD -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="pair-name">BTC / USD</div>
+          <div class="pair-tag">BITCOIN · LIVE</div>
+        </div>
+        <div>
+          <div class="pair-price">94,328.50</div>
+          <div class="pair-change">+2.41% ↑ $2,217</div>
+        </div>
+      </div>
+      <svg class="chart-svg" viewBox="0 0 400 180" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#d4ff3d" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#d4ff3d" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path class="chart-area" d="M0,140 L20,135 L40,142 L60,128 L80,118 L100,125 L120,108 L140,115 L160,95 L180,88 L200,98 L220,80 L240,72 L260,82 L280,65 L300,58 L320,68 L340,50 L360,42 L380,32 L400,25 L400,180 L0,180 Z"/>
+        <path class="chart-line" d="M0,140 L20,135 L40,142 L60,128 L80,118 L100,125 L120,108 L140,115 L160,95 L180,88 L200,98 L220,80 L240,72 L260,82 L280,65 L300,58 L320,68 L340,50 L360,42 L380,32 L400,25"/>
+      </svg>
+      <div class="chart-stats">
+        <div class="chart-stat">
+          <div class="l">24h High</div>
+          <div class="v">95,124</div>
+        </div>
+        <div class="chart-stat">
+          <div class="l">24h Low</div>
+          <div class="v">91,872</div>
+        </div>
+        <div class="chart-stat">
+          <div class="l">Volume</div>
+          <div class="v">28.4B</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-num">350<span class="plus">+</span></div>
+      <div class="stat-lbl">Tradable Markets</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">1:1000</div>
+      <div class="stat-lbl">Max Leverage</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num"><span class="sym">$</span>1</div>
+      <div class="stat-lbl">Minimum Deposit</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">24/7</div>
+      <div class="stat-lbl">Multilingual Support</div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="container">
+    <div class="eyebrow">Why Quo Markets</div>
+    <h2 class="section-title">Built for traders who refuse to <em>settle</em>.</h2>
+    <p class="section-sub">Every feature engineered to give you an edge — from execution speed to fund security.</p>
+
+    <div class="bento">
+      <!-- Big card: 350+ markets -->
+      <div class="bento-card b-1">
+        <div>
+          <div class="feat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <div class="feat-title">350+ global markets,<br>one account.</div>
+          <p class="feat-desc">Forex, crypto, stocks, indices, metals, energies — trade them all from a single MT5/MT4 dashboard.</p>
+        </div>
+        <div class="markets-orb">
+          <div class="market-pill mp-1">EUR/USD</div>
+          <div class="market-pill mp-2">BTC</div>
+          <div class="market-pill mp-3">NAS100</div>
+          <div class="market-pill mp-4">XAU</div>
+          <div class="market-pill mp-5">AAPL</div>
+          <div class="market-pill mp-6">ETH</div>
+        </div>
+      </div>
+
+      <!-- Big number: 0.0 spreads -->
+      <div class="bento-card b-2">
+        <div class="feat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+        <div class="big-number">0.0</div>
+        <div class="feat-title" style="font-size:24px;margin-top:8px;">Spreads from zero pips</div>
+        <p class="feat-desc">No mark-up, no hidden fees. Get raw institutional pricing on every trade.</p>
+      </div>
+
+      <!-- Free TradingView -->
+      <div class="bento-card b-3">
+        <div class="feat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+        </div>
+        <div class="feat-title">Free<br>TradingView</div>
+        <p class="feat-desc">Premium charts integrated at zero cost.</p>
+      </div>
+
+      <!-- Instant Withdrawals -->
+      <div class="bento-card b-4">
+        <div class="feat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <div class="feat-title">Instant<br>Withdrawals</div>
+        <p class="feat-desc">Award-winning fastest payouts in 2026.</p>
+      </div>
+
+      <!-- Negative balance -->
+      <div class="bento-card b-5">
+        <div class="feat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="feat-title">Negative Balance<br>Protection</div>
+        <p class="feat-desc">Never lose more than you deposit. Ever.</p>
+      </div>
+
+      <!-- MT5 Platform -->
+      <div class="bento-card b-6">
+        <div class="feat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div class="feat-title">MT5 + MT4 across every device</div>
+        <p class="feat-desc">Trade on desktop, web, tablet, or mobile. 80+ indicators, expert advisors, automated strategies, and one-click execution — all built in.</p>
+      </div>
+
+      <!-- Segregated Funds -->
+      <div class="bento-card b-7">
+        <div class="feat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="feat-title">Your funds, fully segregated</div>
+        <p class="feat-desc">Client funds held in separate bank accounts from operational funds. Backed by external proof-of-reserves audits for total transparency.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AWARDS -->
+<div class="awards-section">
+  <div class="container">
+    <div class="eyebrow" style="justify-content:center;">Industry Recognition</div>
+    <h2 class="section-title" style="margin-left:auto;margin-right:auto;text-align:center;">Award-winning by every <em>measure</em>.</h2>
+
+    <div class="awards-grid">
+      <div class="award-card">
+        <div class="award-icon">★</div>
+        <div class="award-year">2026</div>
+        <div class="award-title">Fastest Withdrawal Broker</div>
+      </div>
+      <div class="award-card">
+        <div class="award-icon">◆</div>
+        <div class="award-year">2026</div>
+        <div class="award-title">Best Global Affiliate Program</div>
+      </div>
+      <div class="award-card">
+        <div class="award-icon">●</div>
+        <div class="award-year">Trusted</div>
+        <div class="award-title">Multi-jurisdiction Regulated Broker</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section>
+  <div class="container">
+    <div class="eyebrow">Get Started in Minutes</div>
+    <h2 class="section-title">From signup to first trade in <em>under 5 minutes</em>.</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-title">Click & Register</div>
+        <p class="step-desc">Sign up with your email through the secure registration link. Zero cost, zero commitment.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-title">Fund Your Account</div>
+        <p class="step-desc">Deposit from just $1 using your preferred payment method. Instant credit, no waiting.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-title">Trade 350+ Markets</div>
+        <p class="step-desc">Open MT5 and start trading forex, crypto, stocks, gold and more — all from one account.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<div class="quote-section">
+  <div class="container">
+    <p class="quote">
+      "Compared to other brokers, the spreads are very good and execution is fast. The customer service is solution-oriented — I'd <em>recommend Quo Markets</em> without hesitation."
+    </p>
+    <div class="quote-author">— Verified Trustpilot Review</div>
+  </div>
+</div>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="final-cta-inner">
+    <div class="eyebrow" style="justify-content:center;">Your Move</div>
+    <h1 class="final-title">
+      The market doesn't wait.<br><em>Why should you?</em>
+    </h1>
+    <p class="final-sub">Open your free account today and join thousands of traders building wealth with Quo Markets.</p>
+    <a href="https://my.quomarkets.com/register?regnew=5603" class="cta-mega" target="_blank">
+      Create Free Account
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+    <div class="final-trust">
+      <div class="trust-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        100% Free Signup
+      </div>
+      <div class="trust-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Regulated Broker
+      </div>
+      <div class="trust-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Instant Access
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Quo<em style="font-style:italic;color:var(--lime);">.</em>Markets</div>
+    <div class="footer-disclaimer">
+      Risk Warning: Trading CFDs involves significant risk of loss. Approximately 72.6% of retail CFD accounts lose money due to leverage. Trade only with capital you can afford to lose. This is a partner referral.
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Mouse-tracking glow on bento cards
+  document.querySelectorAll('.bento-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      card.style.setProperty('--mx', x + '%');
+      card.style.setProperty('--my', y + '%');
+    });
+  });
+
+  // Subtle live ticker price flicker
+  const prices = document.querySelectorAll('.ticker-price');
+  setInterval(() => {
+    const random = prices[Math.floor(Math.random() * prices.length)];
+    const original = random.textContent;
+    random.style.transition = 'color 0.3s';
+    random.style.color = '#d4ff3d';
+    setTimeout(() => { random.style.color = ''; }, 400);
+  }, 1500);
+</script>
+
+</body>
+</html>
